@@ -32,8 +32,21 @@ class HashMap {
     const check = this.checkBucket(key);
     if (!check) {
       this.buckets[hashKey].append(obj);
+      this.checkLoad();
     } else {
-      this.buckets[hashKey].replace(check.item, check.index);
+      this.buckets[hashKey].replace(obj, check.index);
+    }
+  }
+
+  checkLoad() {
+    const maxLoad = this.capacity * this.loadFactor;
+    if (this.length() >= maxLoad) {
+      const list = this.getAll();
+      this.capacity *= 2;
+      this.buckets = this.createBuckets(this.capacity);
+      list.forEach((item) => {
+        this.set(item.key, item.value);
+      });
     }
   }
 
@@ -114,6 +127,17 @@ class HashMap {
     return result;
   }
 
+  getAll() {
+    let result = [];
+    for (let i = 0; i < this.capacity; i++) {
+      const list = this.buckets[i].getAllValues();
+      list.forEach((item) => {
+        result.push(item);
+      });
+    }
+    return result;
+  }
+
   entries() {
     let result = [];
     for (let i = 0; i < this.capacity; i++) {
@@ -126,9 +150,4 @@ class HashMap {
   }
 }
 
-const hashMap = new HashMap();
-
-hashMap.set('hello', 'hi');
-hashMap.set('hello', 'not hi');
-
-console.log(hashMap.entries());
+export default HashMap;
