@@ -15,6 +15,12 @@ class HashMap {
     return result;
   }
 
+  checkIndex(index) {
+    if (index < 0 || index >= this.buckets.length) {
+      throw new Error('Trying to access index out of bound');
+    }
+  }
+
   hash(key) {
     let hashCode = 0;
 
@@ -31,16 +37,18 @@ class HashMap {
     const hashKey = this.hash(key);
     const check = this.checkBucket(key);
     if (!check) {
+      this.checkIndex(hashKey);
       this.buckets[hashKey].append(obj);
       this.checkLoad();
     } else {
+      this.checkIndex(hashKey);
       this.buckets[hashKey].replace(obj, check.index);
     }
   }
 
   checkLoad() {
     const maxLoad = this.capacity * this.loadFactor;
-    if (this.length() >= maxLoad) {
+    if (this.length() > maxLoad) {
       const list = this.getAll();
       this.capacity *= 2;
       this.buckets = this.createBuckets(this.capacity);
@@ -52,6 +60,7 @@ class HashMap {
 
   checkBucket(key) {
     const hashKey = this.hash(key);
+    this.checkIndex(hashKey);
     const list = this.buckets[hashKey].getAllValues();
     let result = false;
     if (list === null) {
@@ -95,6 +104,7 @@ class HashMap {
   length() {
     let length = 0;
     for (let i = 0; i < this.capacity; i++) {
+      this.checkIndex(i);
       length += this.buckets[i].getSize();
     }
     return length;
@@ -108,21 +118,27 @@ class HashMap {
   keys() {
     let result = [];
     for (let i = 0; i < this.capacity; i++) {
+      this.checkIndex(i);
       const list = this.buckets[i].getAllValues();
-      list.forEach((item) => {
-        result.push(item.key);
-      });
+      if (list) {
+        list.forEach((item) => {
+          result.push(item.key);
+        });
+      }
     }
     return result;
   }
 
-  value() {
+  values() {
     let result = [];
     for (let i = 0; i < this.capacity; i++) {
+      this.checkIndex(i);
       const list = this.buckets[i].getAllValues();
-      list.forEach((item) => {
-        result.push(item.value);
-      });
+      if (list) {
+        list.forEach((item) => {
+          result.push(item.value);
+        });
+      }
     }
     return result;
   }
@@ -130,10 +146,13 @@ class HashMap {
   getAll() {
     let result = [];
     for (let i = 0; i < this.capacity; i++) {
+      this.checkIndex(i);
       const list = this.buckets[i].getAllValues();
-      list.forEach((item) => {
-        result.push(item);
-      });
+      if (list) {
+        list.forEach((item) => {
+          result.push(item);
+        });
+      }
     }
     return result;
   }
@@ -141,10 +160,15 @@ class HashMap {
   entries() {
     let result = [];
     for (let i = 0; i < this.capacity; i++) {
+      this.checkIndex(i);
       const list = this.buckets[i].getAllValues();
-      list.forEach((item) => {
-        result.push([item.key, item.value]);
-      });
+      if (list) {
+        list.forEach((item) => {
+          result.push([item.key, item.value]);
+        });
+      } else {
+        result.push(null);
+      }
     }
     return result;
   }

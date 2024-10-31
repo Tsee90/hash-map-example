@@ -50,6 +50,9 @@ class LinkedList {
   }
 
   getAllValues() {
+    if (this.head === null) {
+      return null;
+    }
     let values = [];
     let current = this.head;
     while (current !== null) {
@@ -159,10 +162,12 @@ class LinkedList {
       throw new Error(`index: ${index} is invalid: removeAt(index)`);
     } else if (index === 0) {
       this.head = this.head.nextNode;
+      this.size -= 1;
     } else {
       const before = this.at(index - 1);
       const after = this.at(index + 1);
       before.nextNode = after;
+      this.size -= 1;
     }
   }
 }

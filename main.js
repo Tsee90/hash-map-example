@@ -15,9 +15,6 @@ test.set('jacket', 'blue');
 test.set('kite', 'pink');
 test.set('lion', 'golden');
 
-console.log(test.entries());
-
-test.set('apple', 'green');
-test.set('frog', 'red');
-
-console.log(test.entries());
+console.log(test.remove('apple'));
+console.log(test.has('apple'));
+console.log(test.length());
